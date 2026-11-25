@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Glykolyse-Trainer · Wiederholung Klausur</title>
+<style>
+  :root { --green:#3E7D5A; --grey:#333; --mid:#777; --line:#cfcfcf; --enz:#7E57C2; --enzl:#EFE8F9;
+          --red:#C0392B; --redl:#FBE4E1; --grn:#2E7D32; --grnl:#E4F2E5; --blue:#1F5FA8; --bluel:#E3EDF9;
+          --stoff:#F7F1E3; --stoffl:#9C8A64; --acc:#E07A5F; --bg:#F5F6F2; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; font-family: Arial, Helvetica, sans-serif; color:var(--grey); background:var(--bg); font-size:16px; line-height:1.45; }
+  header { background:var(--green); color:#fff; padding:16px 20px 14px; }
+  header h1 { margin:0; font-size:23px; }
+  header p { margin:4px 0 0; font-size:14px; opacity:.92; }
+  nav { display:flex; flex-wrap:wrap; gap:8px; padding:12px 20px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:5; }
+  nav button { border:1.5px solid var(--green); background:#fff; color:var(--green); padding:9px 14px; border-radius:22px; cursor:pointer; font-size:15px; font-weight:bold; }
+  nav button.active { background:var(--green); color:#fff; }
+  main { padding:12px 16px 70px; max-width:900px; margin:0 auto; }
+  section { display:none; } section.active { display:block; }
+  h2 { color:var(--green); font-size:21px; margin:14px 0 6px; }
+  h3 { font-size:17px; margin:2px 0 8px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0; }
+  .info { background:var(--enzl); border-color:var(--enz); }
+  .legend { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; font-size:14px; }
+  .lg-stoff { display:inline-block; padding:2px 12px; border:1.5px solid var(--stoffl); background:var(--stoff); border-radius:8px; }
+  .chip { display:inline-block; padding:3px 10px; border-radius:12px; font-size:13px; font-weight:bold; border:1.5px solid; }
+  .c-red { color:var(--red); background:var(--redl); } .c-grn { color:var(--grn); background:var(--grnl); } .c-blue { color:var(--blue); background:var(--bluel); }
+  .counter { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .counter div { background:var(--bg); border-radius:10px; padding:8px; text-align:center; font-size:13px; }
+  .counter strong { display:block; font-size:26px; }
+  .stepbar { display:flex; gap:6px; flex-wrap:wrap; margin:10px 0 4px; align-items:center; }
+  .stepbar button { width:38px; height:38px; border-radius:50%; border:2px solid; font-weight:bold; cursor:pointer; font-size:15px; }
+  .stepbar .inv { border-color:var(--red); color:var(--red); background:#fff; }
+  .stepbar .ert { border-color:var(--grn); color:var(--grn); background:#fff; }
+  .stepbar .inv.on { background:var(--red); color:#fff; } .stepbar .ert.on { background:var(--grn); color:#fff; }
+  .stepbar .sep { font-size:12px; color:var(--mid); margin:0 4px; }
+  svg { width:100%; height:auto; display:block; }
+  .phase { font-size:14px; font-weight:bold; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+  button.primary { background:var(--acc); color:#fff; border:none; padding:11px 18px; border-radius:10px; cursor:pointer; font-size:16px; font-weight:bold; }
+  button.secondary { background:#fff; color:var(--green); border:1.5px solid var(--green); padding:10px 16px; border-radius:10px; cursor:pointer; font-size:15px; }
+  textarea { width:100%; min-height:110px; font-size:16px; padding:10px; border:1px solid #bbb; border-radius:10px; font-family:inherit; }
+  select, input[type=number] { font-size:16px; padding:7px; border-radius:8px; border:1.5px solid #aaa; background:#fff; max-width:100%; }
+  input[type=number] { width:80px; }
+  .ok { border-color:var(--grn) !important; background:var(--grnl) !important; }
+  .bad { border-color:var(--red) !important; background:var(--redl) !important; }
+  .fb { margin-top:10px; font-weight:bold; }
+  .fb.good { color:var(--grn); } .fb.wrong { color:var(--red); }
+  .solution { display:none; margin-top:10px; padding:12px; background:var(--bg); border-left:4px solid var(--green); border-radius:8px; }
+  .solution.show { display:block; }
+  .chain { display:flex; flex-direction:column; align-items:flex-start; gap:6px; }
+  .chain .en { margin-left:26px; display:flex; align-items:center; gap:8px; color:var(--mid); }
+  .chain select.st { min-width:260px; background:var(--stoff); border-color:var(--stoffl); }
+  .afb { font-size:13px; color:var(--mid); font-weight:normal; }
+  .sprint { background:#FDF1EC; border-color:var(--acc); }
+  .sprint h3 { color:var(--acc); }
+  .match { display:grid; grid-template-columns:1fr auto; gap:8px 12px; align-items:center; }
+  .match.tight { grid-template-columns:90px 1fr; }
+  .match.tight select { width:100%; }
+  .gifte { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; }
+  .gift { border:1px solid var(--line); border-radius:12px; padding:12px; background:#fff; }
+  .gift h4 { margin:0 0 2px; font-size:16px; } .gift small { color:var(--mid); }
+  .gift label { display:block; margin-top:8px; font-size:14px; }
+  .quiz label { display:block; margin:6px 0; padding:8px 10px; border:1px solid var(--line); border-radius:8px; cursor:pointer; }
+  .note { font-size:12px; color:var(--mid); text-align:right; }
+  .anim g.mv { transition: transform .9s ease, opacity .6s ease; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Glykolyse-Trainer</h1>
+  <p>Biologie Q1 · Wiederholung zur Klausur · Bearbeite die Aufgaben zuerst selbst, dann vergleiche mit der Lösung.</p>
+</header>
+<nav>
+  <button class="tab active" data-tab="t1">1 Schritt für Schritt</button>
+  <button class="tab" data-tab="t2">2 Fließschema üben</button>
+  <button class="tab" data-tab="t3">3 Enzyme &amp; PFK</button>
+  <button class="tab" data-tab="t4">4 Synapse &amp; Gifte</button>
+  <button class="tab" data-tab="t5">5 Quiz</button>
+</nav>
+<main>
+
+<!-- ============ 1 Schritt für Schritt ============ -->
+<section id="t1" class="active">
+  <h2>Die Glykolyse Schritt für Schritt</h2>
+  <div class="card">
+    <p style="margin-top:0">Die Glykolyse läuft im <b>Cytoplasma</b> ab. Jeder der zehn Schritte wird von einem eigenen <b>Enzym</b> katalysiert. Enzyme beschleunigen die Reaktion und werden dabei nicht verbraucht.</p>
+    <div class="legend">
+      <span class="lg-stoff">Stoff</span>
+      <span><svg viewBox="0 0 44 26" style="width:40px;display:inline-block;vertical-align:middle"><ellipse cx="22" cy="15" rx="20" ry="11" fill="#7E57C2"/><rect x="15" y="3" width="14" height="9" fill="#fff"/></svg> <span style="color:var(--enz)">Enzym (Kerbe = aktives Zentrum)</span></span>
+      <span class="chip c-red">ATP verbraucht</span><span class="chip c-grn">ATP gebildet</span><span class="chip c-blue">NADH + H⁺ gebildet</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="stepbar" id="stepbar"></div>
+    <div class="phase" id="phase"></div>
+    <svg id="stepsvg" viewBox="0 0 660 230" role="img" aria-label="Aktueller Schritt der Glykolyse"></svg>
+    <p id="steptext" style="min-height:48px"></p>
+    <div class="row">
+      <button class="secondary" id="prev">← Zurück</button>
+      <button class="primary" id="next">Weiter →</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="counter">
+      <div>ATP verbraucht<strong id="cU" style="color:var(--red)">0</strong></div>
+      <div>ATP gebildet<strong id="cM" style="color:var(--grn)">0</strong></div>
+      <div>NADH + H⁺ gebildet<strong id="cN" style="color:var(--blue)">0</strong></div>
+      <div>Netto-ATP<strong id="cNet">0</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 Fließschema üben ============ -->
+<section id="t2">
+  <h2>Fließschema aus dem Gedächtnis</h2>
+  <div class="card">
+    <h3>Aufgabe 1 <span class="afb">(AFB I/II)</span></h3>
+    <p style="margin-top:0"><b>Stelle</b> die Glykolyse als vereinfachtes Fließschema <b>dar</b>: Wähle die Stoffe in der richtigen Reihenfolge und <b>kennzeichne</b> bei jedem Pfeil, was mit den Energieträgern passiert.</p>
+    <div class="chain" id="chain"></div>
+    <div class="row"><button class="primary" id="chainCheck">Prüfen</button><button class="secondary" id="chainNew">Zurücksetzen</button></div>
+    <div class="fb" id="chainFb"></div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 2 <span class="afb">(AFB II)</span></h3>
+    <p style="margin-top:0"><b>Leite</b> aus deinem Schema die Bilanz pro Glucose <b>ab</b>.</p>
+    <div class="match">
+      <span>ATP verbraucht</span><input type="number" id="b1" min="0" max="10">
+      <span>ATP gebildet</span><input type="number" id="b2" min="0" max="10">
+      <span>NADH + H⁺ gebildet</span><input type="number" id="b3" min="0" max="10">
+      <span>Netto-Gewinn an ATP</span><input type="number" id="b4" min="0" max="10">
+    </div>
+    <div class="row"><button class="primary" id="bilCheck">Prüfen</button></div>
+    <div class="fb" id="bilFb"></div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 3 <span class="afb">(AFB III)</span></h3>
+    <p style="margin-top:0"><b>Beurteile</b> die Aussage: „In der Glykolyse wird Energie gewonnen. Also entsteht in jedem Schritt ATP.“</p>
+    <textarea placeholder="Deine Antwort …"></textarea>
+    <button class="secondary sol" data-sol="s23">Lösung zeigen</button>
+    <div class="solution" id="s23">Die Aussage trifft nicht zu. In den Schritten 1 und 3 wird ATP verbraucht (Investition). In den Schritten 2, 4, 5, 8 und 9 wird kein ATP umgesetzt. ATP entsteht nur in den Schritten 7 und 10. Richtig ist nur, dass die Glykolyse insgesamt Energie liefert: netto 2 ATP pro Glucose.</div>
+  </div>
+</section>
+
+<!-- ============ 3 Enzyme & PFK ============ -->
+<section id="t3">
+  <h2>Enzyme in der Glykolyse – Beispiel PFK</h2>
+  <div class="card info">
+    <b>Erinnerung aus der EF:</b> Enzyme sind Proteine. Sie wirken als Biokatalysatoren und beschleunigen Reaktionen. Das Substrat bindet im <b>aktiven Zentrum</b>, das in seiner Form zum Substrat passt (Schlüssel-Schloss-Prinzip). So entsteht ein <b>Enzym-Substrat-Komplex</b>. Danach werden die Produkte freigesetzt, und das Enzym liegt unverändert vor.
+  </div>
+  <div class="card">
+    <h3>So arbeitet die Phosphofructokinase (PFK) in Schritt 3</h3>
+    <div id="pfkLab" style="text-align:center;font-weight:bold;font-size:18px;margin-top:6px"></div>
+    <svg id="pfksvg" class="anim" viewBox="0 18 400 252" style="max-width:520px;margin:0 auto" role="img" aria-label="Die PFK setzt Fructose-6-phosphat und ATP um"></svg>
+    <p id="pfktext" style="min-height:72px"></p>
+    <div class="row">
+      <button class="secondary" id="pPrev">← Zurück</button>
+      <button class="primary" id="pNext">Weiter →</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 1 <span class="afb">(AFB I)</span></h3>
+    <p style="margin-top:0"><b>Ordne</b> jeder Beschreibung den passenden Fachbegriff <b>zu</b>.</p>
+    <div class="match" id="enzMatch"></div>
+    <div class="row"><button class="primary" id="enzCheck">Prüfen</button></div>
+    <div class="fb" id="enzFb"></div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 2 <span class="afb">(AFB II)</span></h3>
+    <p style="margin-top:0"><b>Erläutere</b> mithilfe des Namens „Phospho-fructo-kinase“, welche Reaktion die PFK katalysiert.</p>
+    <textarea placeholder="Deine Antwort …"></textarea>
+    <button class="secondary sol" data-sol="s32">Lösung zeigen</button>
+    <div class="solution" id="s32">„Phospho“ steht für einen Phosphatrest, „fructo“ für das Substrat Fructose-6-phosphat und „kinase“ für ein Enzym, das einen Phosphatrest von ATP überträgt. Die PFK überträgt also einen Phosphatrest von ATP auf Fructose-6-phosphat. Es entstehen Fructose-1,6-bisphosphat und ADP.</div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 3 <span class="afb">(AFB III)</span></h3>
+    <p style="margin-top:0"><b>Beurteile</b> die Aussage: „Die PFK liefert der Zelle Energie, weil sie mit ATP arbeitet.“</p>
+    <textarea placeholder="Deine Antwort …"></textarea>
+    <button class="secondary sol" data-sol="s33">Lösung zeigen</button>
+    <div class="solution" id="s33">Die Aussage ist falsch. Die PFK liefert keine Energie, denn in Schritt 3 wird ATP verbraucht. Als Enzym beschleunigt sie die Reaktion nur (sie senkt die Aktivierungsenergie) und wird dabei nicht verbraucht. ATP gewinnt die Zelle erst in den Schritten 7 und 10. Ohne die PFK würde Schritt 3 aber viel zu langsam ablaufen, und die Ertragsphase würde kaum erreicht.</div>
+  </div>
+  <div class="card sprint">
+    <h3>Schon fertig?</h3>
+    <p style="margin-top:0"><b>Vergleiche</b> die Enzymnamen der Schritte 1, 3, 7 und 10 (Teil 1). <b>Stelle</b> eine Regel <b>auf</b>: Was verrät die Endung „-kinase“?</p>
+    <textarea placeholder="Deine Regel …" style="min-height:70px"></textarea>
+    <button class="secondary sol" data-sol="s34">Lösung zeigen</button>
+    <div class="solution" id="s34">Hexokinase, Phosphofructokinase, Phosphoglycerat-Kinase und Pyruvat-Kinase: In allen vier Schritten wird ein Phosphatrest zwischen ATP bzw. ADP und einem Substrat übertragen. Regel: Eine Kinase überträgt einen Phosphatrest. In den Schritten 1 und 3 wird dabei ATP verbraucht, in 7 und 10 gebildet.</div>
+  </div>
+</section>
+
+<!-- ============ 4 Synapse & Gifte ============ -->
+<section id="t4">
+  <h2>Synapse und Gifte</h2>
+  <div class="card">
+    <h3>Aufgabe 1 <span class="afb">(AFB I)</span></h3>
+    <p style="margin-top:0"><b>Benenne</b> die Strukturen 1 bis 7 der motorischen Endplatte. Auch hier arbeitet ein Enzym (lila).</p>
+    <svg id="synsvg" viewBox="0 0 460 300" role="img" aria-label="Schema einer motorischen Endplatte mit Nummern 1 bis 7"></svg>
+    <div class="match tight" id="synMatch" style="margin-top:10px"></div>
+    <div class="row"><button class="primary" id="synCheck">Prüfen</button></div>
+    <div class="fb" id="synFb"></div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 2 <span class="afb">(AFB I)</span></h3>
+    <p style="margin-top:0"><b>Ordne</b> die Schritte der Erregungsübertragung in die richtige Reihenfolge.</p>
+    <div class="match tight" id="ordMatch"></div>
+    <div class="row"><button class="primary" id="ordCheck">Prüfen</button></div>
+    <div class="fb" id="ordFb"></div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 3 <span class="afb">(AFB II)</span></h3>
+    <p style="margin-top:0">Lies die Steckbriefe. <b>Leite</b> für jedes Gift <b>ab</b>, wie sich die Menge an ACh im synaptischen Spalt verändert und welche Folge das für den Muskel hat.</p>
+    <div class="gifte" id="gifte"></div>
+    <p class="note">Steckbrieftexte: eigene Formulierung</p>
+    <div class="row"><button class="primary" id="giftCheck">Prüfen</button></div>
+    <div class="fb" id="giftFb"></div>
+  </div>
+  <div class="card">
+    <h3>Aufgabe 4 <span class="afb">(AFB III)</span></h3>
+    <p style="margin-top:0"><b>Beurteile</b>, ob Botulinumtoxin trotz seiner Giftigkeit als Medikament gegen dauerhaft verkrampfte Muskeln eingesetzt werden sollte.</p>
+    <textarea placeholder="Deine Antwort …"></textarea>
+    <button class="secondary sol" data-sol="s44">Lösung zeigen</button>
+    <div class="solution" id="s44">Mögliche Argumente dafür: Die Dosis ist sehr gering und wird gezielt in den verkrampften Muskel gespritzt. Die Wirkung bleibt dort, der Muskel entspannt sich, und die Wirkung lässt nach einigen Monaten wieder nach. Dagegen: Das Gift ist hochgiftig. Bei falscher Dosis oder Ausbreitung können andere Muskeln gelähmt werden, z. B. die Atemmuskulatur. Die Wirkung lässt sich nicht sofort rückgängig machen, und die Behandlung muss wiederholt werden. Fazit (Beispiel): Der Einsatz ist vertretbar, wenn eine Ärztin oder ein Arzt genau dosiert und der Nutzen größer ist als das Risiko.</div>
+  </div>
+</section>
+
+<!-- ============ 5 Quiz ============ -->
+<section id="t5">
+  <h2>Abschluss-Quiz</h2>
+  <div id="quiz"></div>
+  <div class="card"><b>Ergebnis:</b> <span id="qScore">0</span> von <span id="qTotal">0</span> richtig.</div>
+</section>
+</main>
+
+<script>
+const C = { enz:'#7E57C2', red:'#C0392B', redl:'#FBE4E1', grn:'#2E7D32', grnl:'#E4F2E5', blue:'#1F5FA8', bluel:'#E3EDF9',
+            stoff:'#F7F1E3', stoffl:'#9C8A64', grey:'#333', orange:'#F2B266', orangel:'#A0602A' };
+const $ = id => document.getElementById(id);
+
+// ---------- Tabs & Lösungen ----------
+document.querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('section').forEach(x => x.classList.remove('active'));
+  b.classList.add('active'); $(b.dataset.tab).classList.add('active');
+  window.scrollTo(0, 0);
+}));
+document.querySelectorAll('button.sol').forEach(b => b.addEventListener('click', () => {
+  const el = $(b.dataset.sol); el.classList.toggle('show');
+  b.textContent = el.classList.contains('show') ? 'Lösung verbergen' : 'Lösung zeigen';
+}));
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function selectHTML(id, options, cls) {
+  return '<select id="' + id + '"' + (cls ? ' class="' + cls + '"' : '') + '><option value="">– wählen –</option>' +
+    options.map(o => '<option>' + o + '</option>').join('') + '</select>';
+}
+function mark(el, good) { el.classList.remove('ok', 'bad'); el.classList.add(good ? 'ok' : 'bad'); }
+function feedback(el, n, total, extra) {
+  el.className = 'fb ' + (n === total ? 'good' : 'wrong');
+  el.textContent = n === total ? 'Alles richtig!' : n + ' von ' + total + ' richtig. ' + (extra || 'Prüfe die rot markierten Felder.');
+}
+
+// ---------- SVG-Bausteine ----------
+function enzSVG(cx, cy, rx, ry, label) {
+  const nw = rx * 0.62, nh = ry * 0.8;
+  let s = '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + C.enz + '"/>' +
+          '<rect x="' + (cx - nw / 2) + '" y="' + (cy - ry - 1) + '" width="' + nw + '" height="' + nh + '" fill="#fff"/>';
+  if (label) s += '<text x="' + cx + '" y="' + (cy + ry * 0.55) + '" text-anchor="middle" font-size="' + Math.round(ry * 0.75) + '" fill="#fff" font-weight="bold">' + label + '</text>';
+  return s;
+}
+function boxSVG(x, y, w, h, lines, bold) {
+  let s = '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="10" fill="' + C.stoff + '" stroke="' + C.stoffl + '" stroke-width="2"/>';
+  const lh = 18, y0 = y + h / 2 - (lines.length - 1) * lh / 2 + 5;
+  lines.forEach((l, i) => { s += '<text x="' + (x + w / 2) + '" y="' + (y0 + i * lh) + '" text-anchor="middle" font-size="15"' + (bold ? ' font-weight="bold"' : '') + ' fill="#333">' + l + '</text>'; });
+  return s;
+}
+const DEFS = '<defs>' + ['333', 'C0392B', '2E7D32', '1F5FA8', '777'].map(c =>
+  '<marker id="ah' + c + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#' + c + '"/></marker>').join('') + '</defs>';
+function arrowSVG(x1, y1, x2, y2, col, w) {
+  col = col || '333';
+  return '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="#' + col + '" stroke-width="' + (w || 3) + '" marker-end="url(#ah' + col + ')"/>';
+}
+
+// ---------- Teil 1: Schritte ----------
+const STEPS = [
+  { n:1, from:['Glucose'], to:['Glucose-6-phosphat'], enz:'Hexokinase', e:['red', 'ATP', 'ADP'], u:1,
+    t:'Die Hexokinase überträgt einen Phosphatrest von ATP auf Glucose. Dabei wird <b>1 ATP verbraucht</b>.' },
+  { n:2, from:['Glucose-6-phosphat'], to:['Fructose-6-phosphat'], enz:'Glucose-6-phosphat-Isomerase',
+    t:'Das Molekül wird nur umgebaut. Eine Isomerase ist ein „Umbau-Enzym“. Es ist <b>kein Energieträger</b> beteiligt.' },
+  { n:3, from:['Fructose-6-phosphat'], to:['Fructose-1,6-', 'bisphosphat'], enz:'Phosphofructokinase (PFK)', e:['red', 'ATP', 'ADP'], u:1,
+    t:'Die PFK überträgt einen zweiten Phosphatrest von ATP. Wieder wird <b>1 ATP verbraucht</b>.' },
+  { n:4, from:['Fructose-1,6-', 'bisphosphat'], to:['Glycerinaldehyd-3-', 'phosphat (GAP)'], to2:['Dihydroxyaceton-', 'phosphat (DHAP)'], enz:'Aldolase',
+    t:'Die Aldolase spaltet den C6-Körper in zwei C3-Körper: <b>GAP und DHAP</b>.' },
+  { n:5, from:['Dihydroxyaceton-', 'phosphat (DHAP)'], to:['Glycerinaldehyd-3-', 'phosphat (GAP)'], enz:'Triosephosphat-Isomerase',
+    t:'DHAP wird zu GAP umgebaut. Jetzt liegen pro Glucose <b>2 GAP</b> vor. Deshalb laufen die Schritte 6 bis 10 <b>zweimal</b> ab.' },
+  { n:6, from:['2 × GAP'], to:['2 × 1,3-Bisphospho-', 'glycerat'], enz:'GAP-Dehydrogenase', e:['blue', '2 NAD⁺', '2 NADH + H⁺'], h:2,
+    t:'GAP wird oxidiert. NAD⁺ nimmt die Elektronen auf und wird zu NADH + H⁺ reduziert: insgesamt <b>2 NADH + H⁺</b>.' },
+  { n:7, from:['2 × 1,3-Bisphospho-', 'glycerat'], to:['2 × 3-Phospho-', 'glycerat'], enz:'Phosphoglycerat-Kinase', e:['green', '2 ADP', '2 ATP'], m:2,
+    t:'Ein Phosphatrest wird vom Substrat auf ADP übertragen: <b>2 ATP werden gebildet</b> (Substratkettenphosphorylierung).' },
+  { n:8, from:['2 × 3-Phospho-', 'glycerat'], to:['2 × 2-Phospho-', 'glycerat'], enz:'Phosphoglycerat-Mutase',
+    t:'Der Phosphatrest wird innerhalb des Moleküls verschoben. Es ist <b>kein Energieträger</b> beteiligt.' },
+  { n:9, from:['2 × 2-Phospho-', 'glycerat'], to:['2 × Phosphoenol-', 'pyruvat (PEP)'], enz:'Enolase',
+    t:'Wasser wird abgespalten. Es entsteht PEP. Es ist <b>kein Energieträger</b> beteiligt.' },
+  { n:10, from:['2 × Phosphoenol-', 'pyruvat (PEP)'], to:['2 × Pyruvat'], enz:'Pyruvat-Kinase', e:['green', '2 ADP', '2 ATP'], m:2,
+    t:'Der letzte Phosphatrest wird auf ADP übertragen: <b>2 ATP werden gebildet</b>. Am Ende stehen <b>2 Pyruvat</b>.' }
+];
+let idx = -1;
+function stepSVG(st) {
+  let s = DEFS;
+  s += boxSVG(10, 95, 200, 58, st.from, st.n === 1);
+  if (st.to2) {
+    s += '<line x1="215" y1="124" x2="390" y2="124" stroke="#333" stroke-width="3"/>';
+    s += arrowSVG(390, 124, 446, 74) + arrowSVG(390, 124, 446, 176);
+    s += boxSVG(450, 45, 200, 58, st.to) + boxSVG(450, 150, 200, 58, st.to2);
+  } else {
+    s += arrowSVG(215, 124, 444, 124);
+    s += boxSVG(450, 95, 200, 58, st.to, st.n === 10);
+  }
+  s += enzSVG(300, 160, 34, 19);
+  s += '<text x="300" y="203" text-anchor="middle" font-size="15" fill="' + C.enz + '" font-weight="bold">' + st.enz + '</text>';
+  s += '<text x="300" y="222" text-anchor="middle" font-size="12" fill="#777">Enzym von Schritt ' + st.n + '</text>';
+  if (st.e) {
+    const col = { red:'C0392B', green:'2E7D32', blue:'1F5FA8' }[st.e[0]];
+    s += '<path d="M 285 40 Q 335 205 385 40" fill="none" stroke="#' + col + '" stroke-width="3" marker-end="url(#ah' + col + ')"/>';
+    s += '<text x="278" y="34" text-anchor="end" font-size="16" font-weight="bold" fill="#' + col + '">' + st.e[1] + '</text>';
+    s += '<text x="392" y="34" text-anchor="start" font-size="16" font-weight="bold" fill="#' + col + '">' + st.e[2] + '</text>';
+  }
+  return s;
+}
+function renderStep() {
+  let u = 0, m = 0, h = 0;
+  for (let i = 0; i <= idx; i++) { u += STEPS[i].u || 0; m += STEPS[i].m || 0; h += STEPS[i].h || 0; }
+  $('cU').textContent = u; $('cM').textContent = m; $('cN').textContent = h; $('cNet').textContent = m - u;
+  document.querySelectorAll('#stepbar button').forEach((b, i) => b.classList.toggle('on', i === idx));
+  if (idx < 0) {
+    $('stepsvg').innerHTML = DEFS + boxSVG(230, 85, 200, 58, ['Glucose'], true) +
+      '<text x="330" y="175" text-anchor="middle" font-size="15" fill="#777">Start: Glucose (C6) im Cytoplasma</text>';
+    $('phase').textContent = '';
+    $('steptext').innerHTML = 'Tippe auf „Weiter“ oder auf eine Schrittnummer.';
+  } else {
+    const st = STEPS[idx];
+    $('stepsvg').innerHTML = stepSVG(st);
+    $('phase').innerHTML = st.n <= 5
+      ? '<span style="color:var(--red)">Investitionsphase (Schritte 1–5, einmal pro Glucose)</span>'
+      : '<span style="color:var(--grn)">Ertragsphase (Schritte 6–10, zweimal pro Glucose)</span>';
+    $('steptext').innerHTML = '<b>Schritt ' + st.n + ':</b> ' + st.t;
+  }
+  $('next').textContent = idx === STEPS.length - 1 ? 'Von vorn' : 'Weiter →';
+}
+(function buildBar() {
+  let h = '';
+  STEPS.forEach((st, i) => {
+    if (i === 5) h += '<span class="sep">|</span>';
+    h += '<button class="' + (st.n <= 5 ? 'inv' : 'ert') + '" data-i="' + i + '" aria-label="Schritt ' + st.n + '">' + st.n + '</button>';
+  });
+  $('stepbar').innerHTML = h;
+  $('stepbar').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { idx = Number(b.dataset.i); renderStep(); }));
+})();
+$('next').addEventListener('click', () => { idx = idx === STEPS.length - 1 ? -1 : idx + 1; renderStep(); });
+$('prev').addEventListener('click', () => { if (idx >= 0) { idx--; renderStep(); } });
+renderStep();
+
+// ---------- Teil 2: Fließschema üben ----------
+const CHAIN = ['Glucose', 'Glucose-6-phosphat', 'Fructose-6-phosphat', 'Fructose-1,6-bisphosphat',
+               'Glycerinaldehyd-3-phosphat', '1,3-Bisphosphoglycerat', 'Pyruvat'];
+const EN = ['kein Energieträger', 'ATP wird verbraucht', 'ATP wird gebildet', 'NADH + H⁺ wird gebildet'];
+const CHAIN_EN = [1, 0, 1, 0, 3, 2];
+function buildChain() {
+  const opts = shuffle(CHAIN);
+  let h = '';
+  CHAIN.forEach((_, i) => {
+    h += selectHTML('ch' + i, opts, 'st');
+    if (i < CHAIN.length - 1) h += '<div class="en">↓ ' + selectHTML('en' + i, EN) + '</div>';
+  });
+  $('chain').innerHTML = h; $('chainFb').textContent = '';
+}
+buildChain();
+$('chainNew').addEventListener('click', buildChain);
+$('chainCheck').addEventListener('click', () => {
+  let n = 0, total = 0;
+  CHAIN.forEach((c, i) => { const el = $('ch' + i); total++; const g = el.value === c; mark(el, g); if (g) n++; });
+  CHAIN_EN.forEach((e, i) => { const el = $('en' + i); total++; const g = el.value === EN[e]; mark(el, g); if (g) n++; });
+  feedback($('chainFb'), n, total, 'Tipp: Schau dir in Teil 1 die Schritte 1, 3, 6, 7 und 10 noch einmal an.');
+});
+$('bilCheck').addEventListener('click', () => {
+  const sol = [2, 4, 2, 2]; let n = 0;
+  sol.forEach((v, i) => { const el = $('b' + (i + 1)); const g = Number(el.value) === v && el.value !== ''; mark(el, g); if (g) n++; });
+  feedback($('bilFb'), n, 4, 'Tipp: In der Ertragsphase laufen die Schritte zweimal ab.');
+});
+
+// ---------- Teil 3: PFK-Animation ----------
+const PFK_TXT = [
+  '<b>Vor der Reaktion:</b> Die PFK besitzt ein aktives Zentrum. Die Substrate Fructose-6-phosphat (F6P) und ATP passen in ihrer Form genau hinein (Schlüssel-Schloss-Prinzip).',
+  '<b>Enzym-Substrat-Komplex:</b> F6P und ATP sind im aktiven Zentrum gebunden. Jetzt wird ein Phosphatrest von ATP auf F6P übertragen.',
+  '<b>Nach der Reaktion:</b> Die Produkte Fructose-1,6-bisphosphat (F1,6bP) und ADP werden freigesetzt. Die PFK liegt unverändert vor und kann das nächste F6P umsetzen.'
+];
+function hexPts(cx, cy, r) {
+  let p = []; for (let k = 0; k < 6; k++) { const a = Math.PI / 180 * (60 * k); p.push((cx + r * Math.cos(a)).toFixed(1) + ',' + (cy + r * Math.sin(a)).toFixed(1)); }
+  return p.join(' ');
+}
+(function buildPfk() {
+  let s = DEFS;
+  s += '<ellipse cx="200" cy="195" rx="135" ry="62" fill="' + C.enz + '"/>';
+  s += '<polygon points="' + hexPts(150, 139, 28) + '" fill="#fff"/>';
+  s += '<rect x="232" y="124" width="56" height="32" rx="6" fill="#fff"/>';
+  s += '<text x="200" y="222" text-anchor="middle" font-size="26" font-weight="bold" fill="#fff">PFK</text>';
+  s += '<text x="200" y="250" text-anchor="middle" font-size="12" fill="#fff">Enzym</text>';
+  // Substrate (Zustand 0/1)
+  s += '<g id="gF6P" class="mv"><polygon points="' + hexPts(150, 139, 28) + '" fill="' + C.orange + '" stroke="' + C.orangel + '" stroke-width="2"/>' +
+       '<text x="150" y="144" text-anchor="middle" font-size="13" font-weight="bold" fill="#333">F6P</text></g>';
+  s += '<g id="gATP" class="mv"><rect x="232" y="124" width="56" height="32" rx="6" fill="' + C.redl + '" stroke="' + C.red + '" stroke-width="2"/>' +
+       '<text x="260" y="145" text-anchor="middle" font-size="13" font-weight="bold" fill="' + C.red + '">ATP</text></g>';
+  // Produkte (Zustand 2)
+  s += '<g id="gF16" class="mv"><polygon points="' + hexPts(150, 139, 32) + '" fill="' + C.orange + '" stroke="' + C.orangel + '" stroke-width="2"/>' +
+       '<text x="150" y="144" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">F1,6bP</text>' +
+       '<circle cx="190" cy="112" r="12" fill="' + C.redl + '" stroke="' + C.red + '" stroke-width="2"/>' +
+       '<text x="190" y="117" text-anchor="middle" font-size="12" font-weight="bold" fill="' + C.red + '">P</text></g>';
+  s += '<g id="gADP" class="mv"><rect x="236" y="124" width="48" height="32" rx="6" fill="' + C.redl + '" stroke="' + C.red + '" stroke-width="2"/>' +
+       '<text x="260" y="145" text-anchor="middle" font-size="13" font-weight="bold" fill="' + C.red + '">ADP</text></g>';
+  $('pfksvg').innerHTML = s;
+})();
+let pState = 0;
+function renderPfk() {
+  const set = (id, x, y, op) => { const g = $(id); g.style.transform = 'translate(' + x + 'px,' + y + 'px)'; g.style.opacity = op; };
+  if (pState === 0) { set('gF6P', -40, -72, 1); set('gATP', 40, -72, 1); set('gF16', 0, 0, 0); set('gADP', 0, 0, 0); }
+  if (pState === 1) { set('gF6P', 0, 0, 1); set('gATP', 0, 0, 1); set('gF16', 0, 0, 0); set('gADP', 0, 0, 0); }
+  if (pState === 2) { set('gF6P', 0, 0, 0); set('gATP', 0, 0, 0); set('gF16', -45, -72, 1); set('gADP', 45, -72, 1); }
+  $('pfkLab').textContent = ['Enzym + Substrate', 'Enzym-Substrat-Komplex', 'Enzym + Produkte'][pState];
+  $('pfktext').innerHTML = PFK_TXT[pState];
+  $('pNext').textContent = pState === 2 ? 'Von vorn' : 'Weiter →';
+}
+$('pNext').addEventListener('click', () => { pState = (pState + 1) % 3; renderPfk(); });
+$('pPrev').addEventListener('click', () => { if (pState > 0) { pState--; renderPfk(); } });
+renderPfk();
+
+const ENZ_ITEMS = [
+  ['Bereich des Enzyms, in den das Substrat genau hineinpasst', 'aktives Zentrum'],
+  ['Stoff, der vom Enzym umgesetzt wird (hier F6P und ATP)', 'Substrat'],
+  ['Enzym und gebundenes Substrat zusammen', 'Enzym-Substrat-Komplex'],
+  ['Stoff, der bei der Reaktion entsteht (hier F1,6bP und ADP)', 'Produkt'],
+  ['Protein, das die Reaktion beschleunigt und dabei nicht verbraucht wird', 'Enzym']
+];
+(function () {
+  const opts = shuffle(ENZ_ITEMS.map(x => x[1]));
+  $('enzMatch').innerHTML = ENZ_ITEMS.map((x, i) => '<span>' + x[0] + '</span>' + selectHTML('ez' + i, opts)).join('');
+})();
+$('enzCheck').addEventListener('click', () => {
+  let n = 0; ENZ_ITEMS.forEach((x, i) => { const el = $('ez' + i); const g = el.value === x[1]; mark(el, g); if (g) n++; });
+  feedback($('enzFb'), n, ENZ_ITEMS.length);
+});
+
+// ---------- Teil 4: Synapse ----------
+(function buildSyn() {
+  let s = DEFS;
+  s += '<rect x="40" y="215" width="400" height="75" fill="#F6D5CF" stroke="#B0605A" stroke-width="2"/>';
+  s += '<text x="240" y="275" text-anchor="middle" font-size="13" fill="#B0605A">Muskelfaser</text>';
+  s += '<ellipse cx="230" cy="110" rx="180" ry="90" fill="#FFF1C4" stroke="#A8872A" stroke-width="2"/>';
+  s += '<rect x="196" y="0" width="68" height="30" fill="#FFF1C4"/>';
+  s += '<line x1="196" y1="0" x2="196" y2="22" stroke="#A8872A" stroke-width="2"/><line x1="264" y1="0" x2="264" y2="22" stroke="#A8872A" stroke-width="2"/>';
+  [[130, 95], [195, 65], [265, 72], [330, 100], [165, 140], [240, 128], [305, 150]].forEach(([x, y]) => {
+    s += '<circle cx="' + x + '" cy="' + y + '" r="15" fill="#fff" stroke="#2E7D32" stroke-width="2"/>';
+    [[-5, -4], [5, -4], [0, 6]].forEach(([dx, dy]) => { s += '<circle cx="' + (x + dx) + '" cy="' + (y + dy) + '" r="2.6" fill="#2E7D32"/>'; });
+  });
+  s += '<rect x="124" y="172" width="13" height="26" fill="#E8954A" stroke="#A0602A" stroke-width="1.5"/>';
+  [[250, 206], [266, 202], [282, 209], [298, 203], [314, 208], [234, 210]].forEach(([x, y]) => { s += '<circle cx="' + x + '" cy="' + y + '" r="3" fill="#2E7D32"/>'; });
+  [100, 170, 245, 320].forEach(x => { s += '<rect x="' + x + '" y="205" width="20" height="20" fill="' + C.blue + '"/><rect x="' + (x + 6.5) + '" y="204" width="7" height="8" fill="#fff"/>'; });
+  [[62, 207], [212, 207], [378, 207]].forEach(([x, y]) => { s += enzSVG(x, y, 15, 9); });
+  const num = (n, x, y, tx, ty) => '<line x1="' + x + '" y1="' + y + '" x2="' + tx + '" y2="' + ty + '" stroke="#333" stroke-width="1.3"/>' +
+    '<circle cx="' + x + '" cy="' + y + '" r="11" fill="#fff" stroke="#333" stroke-width="1.5"/><text x="' + x + '" y="' + (y + 5) + '" text-anchor="middle" font-size="13" font-weight="bold">' + n + '</text>';
+  s += num(1, 16, 40, 88, 56) + num(2, 16, 90, 115, 95) + num(3, 16, 150, 124, 182) + num(6, 16, 200, 48, 207) + num(7, 16, 262, 42, 222);
+  s += num(4, 444, 150, 290, 205) + num(5, 444, 262, 336, 222);
+  $('synsvg').innerHTML = s;
+})();
+const SYN = ['Endknöpfchen', 'synaptisches Vesikel mit ACh', 'Ca²⁺-Kanal', 'synaptischer Spalt', 'ACh-Rezeptor (Na⁺-Kanal)',
+             'Acetylcholinesterase (Enzym)', 'Membran der Muskelfaser'];
+(function () {
+  const opts = shuffle(SYN);
+  $('synMatch').innerHTML = SYN.map((_, i) => '<span><b>' + (i + 1) + '</b></span>' + selectHTML('sy' + i, opts)).join('');
+})();
+$('synCheck').addEventListener('click', () => {
+  let n = 0; SYN.forEach((x, i) => { const el = $('sy' + i); const g = el.value === x; mark(el, g); if (g) n++; });
+  feedback($('synFb'), n, SYN.length);
+});
+const ORD = ['Ein Aktionspotenzial erreicht das Endknöpfchen.', 'Ca²⁺-Ionen strömen in das Endknöpfchen ein.',
+             'Vesikel verschmelzen mit der Membran, ACh gelangt in den Spalt.', 'ACh bindet an Rezeptoren, Na⁺-Ionen strömen in die Muskelfaser ein.',
+             'Ein Endplattenpotenzial entsteht, die Muskelfaser wird erregt.', 'Die Acetylcholinesterase spaltet ACh im Spalt.'];
+(function () {
+  const opts = shuffle(ORD);
+  $('ordMatch').innerHTML = ORD.map((_, i) => '<span><b>' + (i + 1) + '. Schritt</b></span>' + selectHTML('or' + i, opts)).join('');
+})();
+$('ordCheck').addEventListener('click', () => {
+  let n = 0; ORD.forEach((x, i) => { const el = $('or' + i); const g = el.value === x; mark(el, g); if (g) n++; });
+  feedback($('ordFb'), n, ORD.length);
+});
+const GIFTE = [
+  { n:'Botulinumtoxin', sub:'Gift des Bakteriums Clostridium botulinum', t:'Verhindert, dass die Vesikel mit der Membran des Endknöpfchens verschmelzen.', a:'weniger ACh', f:'schlaffe Lähmung' },
+  { n:'α-Latrotoxin', sub:'Gift der Schwarzen Witwe (Spinne)', t:'Löst eine massive, ungesteuerte Ausschüttung von ACh aus, bis die Vesikel leer sind.', a:'mehr ACh', f:'Krämpfe, später Lähmung' },
+  { n:'E605 (Parathion)', sub:'Organophosphat, früher als Insektizid eingesetzt', t:'Hemmt das Enzym Acetylcholinesterase dauerhaft.', a:'mehr ACh', f:'Krämpfe, später Lähmung' }
+];
+const GA = ['mehr ACh', 'weniger ACh'], GF = ['schlaffe Lähmung', 'Krämpfe, später Lähmung'];
+$('gifte').innerHTML = GIFTE.map((g, i) => '<div class="gift"><h4>' + g.n + '</h4><small>' + g.sub + '</small><p style="margin:8px 0">' + g.t + '</p>' +
+  '<label>ACh im Spalt: ' + selectHTML('ga' + i, GA) + '</label><label>Folge für den Muskel: ' + selectHTML('gf' + i, GF) + '</label></div>').join('');
+$('giftCheck').addEventListener('click', () => {
+  let n = 0; GIFTE.forEach((g, i) => {
+    const a = $('ga' + i), f = $('gf' + i);
+    const ga = a.value === g.a, gf = f.value === g.f; mark(a, ga); mark(f, gf); n += ga + gf;
+  });
+  feedback($('giftFb'), n, GIFTE.length * 2, 'Tipp: Überlege zuerst, ob mehr oder weniger ACh an die Rezeptoren bindet.');
+});
+
+// ---------- Teil 5: Quiz ----------
+const QUIZ = [
+  ['Wo läuft die Glykolyse ab?', ['im Mitochondrium', 'im Cytoplasma', 'im Zellkern'], 1, 'Die Glykolyse läuft im Cytoplasma ab.'],
+  ['Wie viele ATP werden in der Investitionsphase pro Glucose verbraucht?', ['1', '2', '4'], 1, 'Die Schritte 1 und 3 verbrauchen je 1 ATP.'],
+  ['Welches Enzym katalysiert Schritt 3?', ['Hexokinase', 'Phosphofructokinase (PFK)', 'Pyruvat-Kinase'], 1, 'Die PFK setzt Fructose-6-phosphat und ATP zu Fructose-1,6-bisphosphat und ADP um.'],
+  ['Was passiert mit einem Enzym nach der Reaktion?', ['Es wird zum Produkt umgebaut.', 'Es liegt unverändert vor und kann erneut arbeiten.', 'Es wird als Energieträger verbraucht.'], 1, 'Enzyme sind Biokatalysatoren und werden nicht verbraucht.'],
+  ['Was verrät die Endung „-kinase“?', ['Das Enzym spaltet Wasser ab.', 'Das Enzym überträgt einen Phosphatrest.', 'Das Enzym baut ein Molekül nur um.'], 1, 'Kinasen übertragen Phosphatreste, z. B. von ATP auf ein Substrat.'],
+  ['Was passiert mit NAD⁺ in Schritt 6?', ['Es wird zu NADH + H⁺ reduziert.', 'Es wird zu ATP umgebaut.', 'Es wird oxidiert.'], 0, 'NAD⁺ nimmt bei der Oxidation von GAP Elektronen auf.'],
+  ['Wie viel ATP gewinnt die Zelle netto pro Glucose in der Glykolyse?', ['2', '4', '6'], 0, '4 ATP werden gebildet, 2 ATP wurden verbraucht.'],
+  ['Warum laufen die Schritte 6 bis 10 pro Glucose zweimal ab?', ['Weil Glucose in zwei C3-Körper gespalten wird.', 'Weil die Zelle doppelt so viel Energie braucht.', 'Weil die Glykolyse zweimal startet.'], 0, 'Nach Schritt 4 und 5 liegen zwei GAP vor.'],
+  ['Welches Enzym baut ACh im synaptischen Spalt ab?', ['Acetylcholinesterase', 'Phosphofructokinase', 'Aldolase'], 0, 'Die Acetylcholinesterase spaltet ACh und beendet so die Erregung.'],
+  ['Was löst die Verschmelzung der Vesikel mit der Membran des Endknöpfchens aus?', ['der Einstrom von Na⁺', 'der Einstrom von Ca²⁺', 'der Abbau von ACh'], 1, 'Das Aktionspotenzial öffnet Ca²⁺-Kanäle; Ca²⁺ löst die Ausschüttung aus.']
+];
+let qScore = 0;
+$('quiz').innerHTML = QUIZ.map((q, i) => '<div class="card quiz"><p style="margin-top:0"><b>' + (i + 1) + '. ' + q[0] + '</b></p>' +
+  q[1].map((o, j) => '<label><input type="radio" name="q' + i + '" value="' + j + '"> ' + o + '</label>').join('') +
+  '<button class="primary" data-q="' + i + '">Antwort prüfen</button><div class="fb" id="qf' + i + '"></div></div>').join('');
+$('qTotal').textContent = QUIZ.length;
+document.querySelectorAll('#quiz button[data-q]').forEach(b => b.addEventListener('click', () => {
+  const i = Number(b.dataset.q), q = QUIZ[i], fb = $('qf' + i);
+  const sel = document.querySelector('input[name="q' + i + '"]:checked');
+  if (!sel) { fb.className = 'fb wrong'; fb.textContent = 'Bitte wähle zuerst eine Antwort.'; return; }
+  b.disabled = true; b.style.opacity = .5;
+  document.querySelectorAll('input[name="q' + i + '"]').forEach(r => r.disabled = true);
+  if (Number(sel.value) === q[2]) { qScore++; fb.className = 'fb good'; fb.textContent = 'Richtig! ' + q[3]; }
+  else { fb.className = 'fb wrong'; fb.textContent = 'Leider falsch. Richtig ist: ' + q[1][q[2]] + '. ' + q[3]; }
+  $('qScore').textContent = qScore;
+}));
+</script>
+</body>
+</html>
